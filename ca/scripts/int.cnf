@@ -70,7 +70,6 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid,issuer
 keyUsage               = critical,digitalSignature,keyEncipherment
 extendedKeyUsage       = serverAuth
-subjectAltName         = @alt_names
 
 [ client_cert ]
 basicConstraints       = critical,CA:false
@@ -85,10 +84,6 @@ subjectKeyIdentifier   = hash
 authorityKeyIdentifier = keyid,issuer
 keyUsage               = critical,digitalSignature
 extendedKeyUsage       = OCSPSigning
-
-[ alt_names ]
-# override per-leaf CSR via -addext, or edit here
-DNS.1 = example.lab
 
 [ crl_ext ]
 authorityKeyIdentifier = keyid:always
