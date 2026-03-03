@@ -1,0 +1,19 @@
+dn: ou=Policies,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: Policies
+
+dn: ou=Password,ou=Policies,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: Password
+
+dn: ou=Sudoers,ou=Policies,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: Sudoers
+
+dn: ou=automount,ou=Policies,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: automount

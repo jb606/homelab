@@ -1,0 +1,94 @@
+# Intermediate CA OpenSSL configuration
+
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = BASE_DIR/intermediate
+certs             = $dir/certs
+crl_dir           = $dir/crl
+new_certs_dir     = $dir/newcerts
+database          = $dir/index.txt
+serial            = $dir/serial
+crlnumber         = $dir/crlnumber
+
+private_key       = $dir/private/intermediate-ca.key.pem
+certificate       = $dir/certs/intermediate-ca.cert.pem
+
+crl               = $dir/crl/intermediate-ca.crl.pem
+crl_extensions    = crl_ext
+default_crl_days  = 30
+
+default_md        = sha256
+name_opt          = ca_default
+cert_opt          = ca_default
+
+policy            = policy_loose
+unique_subject    = yes
+
+default_days      = 1825
+
+copy_extensions   = copy
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+default_bits        = 4096
+default_md          = sha256
+prompt              = no
+distinguished_name  = dn
+string_mask         = utf8only
+req_extensions      = v3_intermediate_req
+
+[ dn ]
+C  = US
+ST = PA
+O  = Example Lab
+OU = Intermediate CA
+CN = Example Lab Intermediate CA
+
+[ v3_intermediate_req ]
+basicConstraints = critical,CA:true,pathlen:0
+keyUsage         = critical,keyCertSign,cRLSign
+
+[ v3_intermediate_ca ]
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints       = critical,CA:true,pathlen:0
+keyUsage               = critical,keyCertSign,cRLSign
+
+[ server_cert ]
+basicConstraints       = critical,CA:false
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage               = critical,digitalSignature,keyEncipherment
+extendedKeyUsage       = serverAuth
+subjectAltName         = @alt_names
+
+[ client_cert ]
+basicConstraints       = critical,CA:false
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage               = critical,digitalSignature
+extendedKeyUsage       = clientAuth
+
+[ ocsp ]
+basicConstraints       = critical,CA:false
+subjectKeyIdentifier   = hash
+authorityKeyIdentifier = keyid,issuer
+keyUsage               = critical,digitalSignature
+extendedKeyUsage       = OCSPSigning
+
+[ alt_names ]
+# override per-leaf CSR via -addext, or edit here
+DNS.1 = example.lab
+
+[ crl_ext ]
+authorityKeyIdentifier = keyid:always

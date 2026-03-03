@@ -1,0 +1,23 @@
+dn: dc=example,dc=lab
+objectClass: top
+objectClass: dcObject
+objectClass: organization
+dc: example
+o: example.lab
+
+dn: ou=People,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: People
+
+dn: ou=Groups,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: Groups
+
+dn: ou=ServiceAccounts,dc=example,dc=lab
+objectClass: top
+objectClass: organizationalUnit
+ou: ServiceAccounts
+
+
