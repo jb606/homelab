@@ -1,21 +1,3 @@
-dn: cn=config
-objectClass: olcGlobal
-cn: config
-olcPidFile: /run/slapd/slapd.pid
-olcArgsFile: /run/slapd/slapd.args
-
-dn: cn=module,cn=config
-objectClass: olcModuleList
-cn: module
-olcModulePath: /usr/lib64/openldap
-olcModuleLoad: back_mdb
-
-# slapadd -n 0 -F "${SLAPD_D}" -l "/etc/openldap/schema/core.ldif"
-# slapadd -n 0 -F "${SLAPD_D}" -l "/etc/openldap/schema/cosine.ldif"
-# slapadd -n 0 -F "${SLAPD_D}" -l "/etc/openldap/schema/inetorgperson.ldif"
-# slapadd -n 0 -F "${SLAPD_D}" -l "/etc/openldap/schema/nis.ldif"
-
-
 dn: olcDatabase=config,cn=config
 objectClass: olcDatabaseConfig
 olcDatabase: config
