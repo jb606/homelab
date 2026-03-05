@@ -1,19 +1,19 @@
-dn: ou=Policies,dc=example,dc=lab
+dn: ou=Policies,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: Policies
 
-dn: ou=Password,ou=Policies,dc=example,dc=lab
+dn: ou=Password,ou=Policies,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: Password
 
-dn: ou=Sudoers,ou=Policies,dc=example,dc=lab
+dn: ou=Sudoers,ou=Policies,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: Sudoers
 
-dn: ou=automount,ou=Policies,dc=example,dc=lab
+dn: ou=automount,ou=Policies,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: automount

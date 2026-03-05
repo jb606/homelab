@@ -1,0 +1,4 @@
+dn: ou=Computers,LDAP_SUFFIX
+objectClass: top
+objectClass: organizationalUnit
+ou: Computers

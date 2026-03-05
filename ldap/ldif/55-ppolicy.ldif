@@ -1,4 +1,4 @@
-dn: cn=Default,ou=Password,ou=Policies,dc=example,dc=lab
+dn: cn=Default,ou=Password,ou=Policies,LDAP_SUFFIX
 objectClass: top
 objectClass: device
 objectClass: pwdPolicy

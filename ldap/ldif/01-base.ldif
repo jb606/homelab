@@ -1,21 +1,21 @@
-dn: dc=example,dc=lab
+dn: LDAP_SUFFIX
 objectClass: top
 objectClass: dcObject
 objectClass: organization
-dc: example
-o: example.lab
+dc: DOMAIN
+o: ORG
 
-dn: ou=People,dc=example,dc=lab
+dn: ou=People,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: People
 
-dn: ou=Groups,dc=example,dc=lab
+dn: ou=Groups,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: Groups
 
-dn: ou=ServiceAccounts,dc=example,dc=lab
+dn: ou=ServiceAccounts,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: ServiceAccounts
