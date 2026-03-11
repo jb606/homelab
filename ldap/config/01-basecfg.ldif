@@ -10,3 +10,7 @@ cn: module
 olcModulePath: /usr/lib64/openldap
 olcModuleLoad: back_mdb
 olcModuleLoad: ppolicy.la
+olcModuleLoad: lastbind.la
+olcModuleLoad: auditlog.so
+olcModuleLoad: memberof.so
+
