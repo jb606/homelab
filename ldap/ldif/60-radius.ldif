@@ -2,3 +2,13 @@ dn: ou=Computers,LDAP_SUFFIX
 objectClass: top
 objectClass: organizationalUnit
 ou: Computers
+
+dn: ou=Radius,LDAP_SUFFIX
+objectClass: top
+objectClass: organizationalUnit
+ou: Radius
+
+dn: ou=Devices,ou=Radius,LDAP_SUFFIX
+objectClass: top
+objectClass: organizationalUnit
+ou: Devices

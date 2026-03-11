@@ -1,0 +1,34 @@
+listen {
+    ipaddr = *
+    port = 2083
+    type = auth+acct
+    proto = tcp
+    clients = radsec
+    tls {
+        private_key_file = ${certdir}/labserver.key
+        certificate_file = ${certdir}/labserver.crt
+        ca_file = ${cadir}/ca.crt
+        cipher_list = "HIGH:!aNULL:!eNULL:!MD5:!SHA1"
+        
+        # STIG compliance: Disable older TLS versions
+        min_version = "1.2"
+        
+        # Ensure 'require_client_cert' is yes for mutual TLS
+        require_client_cert = yes
+    }
+    virtual_server = default
+}
+clients radsec {
+    # Define per host
+    client switch1 {
+        ipaddr = x.x.x.x
+        proto = tls
+        secret = radsec
+    }
+    # Define per subnet
+    client prod_network {
+    	ipaddr = 10.0.0.0/24
+        proto = tls
+        secret = radsec
+    }
+}

@@ -1,0 +1,8 @@
+dn: cn=switch01,ou=Clients,ou=Radius,dc=example,dc=lab
+objectClass: device
+objectClass: ipHost
+objectClass: radiusClient
+cn: switch01
+ipHostNumber: 10.0.10.1
+radiusClientSecret: supersecret
+description: Core switch

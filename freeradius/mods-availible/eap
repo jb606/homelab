@@ -1,0 +1,57 @@
+eap {
+    default_eap_type = tls
+    timer_expire     = 60
+    ignore_unknown_eap_types = no
+    cisco_accounting_username_bug = no
+
+    tls-config tls-common {
+        private_key_file = ${certdir}/labserver.key
+        certificate_file = ${certdir}/labserver.crt
+        ca_file = ${certdir}/ca.crt
+
+        # STIG-friendly floor
+        tls_min_version = "1.2"
+
+        # Optional: pin policy tighter if all clients support it
+        tls_max_version = "1.2"
+
+        # Prefer server-side cipher selection
+        cipher_server_preference = yes
+
+        # CRL/OCSP if you operate revocation
+        # check_crl = yes
+
+        cache {
+            enable = no
+        }
+
+        verify {
+            tmpdir = /var/lib/radiusd
+            client = "/usr/bin/openssl verify -CAfile ${certdir}/ca.crt %{TLS-Client-Cert-Filename}"
+        }
+    }
+
+    tls {
+        tls = tls-common
+    }
+
+    # Disable what you do not use
+    ttls {
+        tls = tls-common
+        default_eap_type = pap
+        copy_request_to_tunnel = no
+        use_tunneled_reply = no
+        virtual_server = "inner-tunnel"
+    }
+
+    peap {
+        tls = tls-common
+        default_eap_type = mschapv2
+        copy_request_to_tunnel = no
+        use_tunneled_reply = no
+        virtual_server = "inner-tunnel"
+    }
+
+    mschapv2 {
+    }
+}
