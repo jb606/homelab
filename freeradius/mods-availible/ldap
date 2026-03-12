@@ -1,0 +1,19 @@
+ldap {
+    server = "labserver.a.lab"             
+    identity = 'cn=radius,ou=ServiceAccounts,dc=home,dc=lab'
+    password = **********
+    base_dn = "dc=home,dc=lab"     
+
+    user {
+        base_dn = "ou=People,${..base_dn}"
+        filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
+    }
+    update {
+        control:Password-With-Header += 'userPassword'
+    }
+
+    tls {
+        start_tls = yes
+    }
+}
+

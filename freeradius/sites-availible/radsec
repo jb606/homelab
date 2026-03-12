@@ -1,0 +1,60 @@
+# Listen Section
+listen {
+    ipaddr = *
+    port = 2083
+    type = auth+acct
+    proto = tcp
+    clients = radsec-clients
+    #clients = dynamic
+    tls {
+        private_key_file = ${certdir}/labserver.key
+        certificate_file = ${certdir}/labserver.crt
+        ca_file = ${cadir}/ca.crt
+        cipher_list = "HIGH:!aNULL:!eNULL:!MD5:!SHA1"
+        
+        # STIG compliance: Disable older TLS versions
+        #min_version = "1.2"
+        
+        # Ensure 'require_client_cert' is yes for mutual TLS
+        require_client_cert = yes
+    }
+    virtual_server = radsec
+}
+# End listen
+
+clients radsec-clients {
+  client dynamic {
+    ipaddr = 172.16.160.0/20
+    #dynamic_clients = radsec
+    proto = tls
+    lifetime = 3600
+  }
+}
+
+
+server radsec {
+authenticate {
+  eap
+}
+authorize {
+  preprocess
+  # Check if the Authenticator is in ldap
+  if ( "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?radiusClientIdentifier=%{Packet-Src-IP-Address}}" ) {
+    update control {
+      &FreeRADIUS-Client-IP-Address = "%{Packet-Src-IP-Address}"
+      &FreeRADIUS-Client-Secret = "radsec" # This is in the RFC
+      &FreeRADIUS-Client-Shortname = "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientShortname?sub?radiusClientIdentifier=%{Packet-Src-IP-Address}}"
+    }
+    # Check if the supplicant is in ldap
+    if ( "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?(radiusClientShortname=%{User-Name})}" ) {
+      eap
+      ok
+    }
+  }
+  
+}
+# "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?radiusClientShortname=%{User-Name}}"
+
+
+}
+
