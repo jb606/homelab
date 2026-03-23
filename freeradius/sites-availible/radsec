@@ -25,7 +25,6 @@ listen {
 clients radsec-clients {
   client dynamic {
     ipaddr = 172.16.160.0/20
-    #dynamic_clients = radsec
     proto = tls
     lifetime = 3600
   }
@@ -38,19 +37,63 @@ authenticate {
 }
 authorize {
   preprocess
-  # Check if the Authenticator is in ldap
-  if ( "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?radiusClientIdentifier=%{Packet-Src-IP-Address}}" ) {
-    update control {
-      &FreeRADIUS-Client-IP-Address = "%{Packet-Src-IP-Address}"
-      &FreeRADIUS-Client-Secret = "radsec" # This is in the RFC
-      &FreeRADIUS-Client-Shortname = "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientShortname?sub?radiusClientIdentifier=%{Packet-Src-IP-Address}}"
+
+  # We are going to use the Tmp-String-0 helper to setup our mac address to be in xx:xx:xx:xx:xx:xx format
+  if (&Calling-Station-Id && (&Calling-Station-Id =~ /^${policy.mac-addr-regexp}$/i)) {
+    update request {
+      &Calling-Station-Id := "%{toupper:%{1}-%{2}-%{3}-%{4}-%{5}-%{6}}"
+      &Tmp-String-0 := "%{1}:%{2}:%{3}:%{4}:%{5}:%{6}"
     }
-    # Check if the supplicant is in ldap
-    if ( "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?(radiusClientShortname=%{User-Name})}" ) {
-      eap
-      ok
-    }
+    updated
+  } else {
+    noop
   }
+ 
+  
+
+  # MAC SEC Section 
+  if (!EAP-Message) {
+    ldap_macsec
+    if (!&control:LDAP-UserDN) {
+      reject
+    }
+    update reply {
+      Message-Authenticator := 0x00
+    }
+    update control {
+      Auth-Type := Accept
+    }
+    
+  }
+  if (EAP-Message) {
+    # Query ldap (mods-enabled/ldap) for the computer/device object.  
+    # Device must have a name and mac!
+    ldap_radsec
+    # This will kick the device out if we didn't add it because
+    # it didn't have an LDAP entry
+    if (!&control:LDAP-UserDN) {
+      reject
+    }
+    # See modules-enabled/eap
+    eap
+  }
+  # Kick the client if it didn't authenticate
+  if (!&control:Auth-Type) {
+    reject
+  }
+  # Check if the Authenticator is in ldap
+#  if ( "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?radiusClientIdentifier=%{Packet-Src-IP-Address}}" ) {
+#    update control {
+#      &FreeRADIUS-Client-IP-Address = "%{Packet-Src-IP-Address}"
+#      &FreeRADIUS-Client-Secret = "radsec" # This is in the RFC
+#      &FreeRADIUS-Client-Shortname = "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientShortname?sub?radiusClientIdentifier=%{Packet-Src-IP-Address}}"
+#    }
+    # Check if the supplicant is in ldap
+#    if ( "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?(radiusClientShortname=%{User-Name})}" ) {
+#      eap
+#      ok
+#    }
+#  }
   
 }
 # "%{ldap:ldap:///ou=Devices,ou=Radius,dc=home,dc=lab?radiusClientIdentifier?sub?radiusClientShortname=%{User-Name}}"

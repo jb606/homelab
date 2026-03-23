@@ -1,13 +1,9 @@
 ldap {
-    server = "labserver.a.lab"             
-    identity = 'cn=radius,ou=ServiceAccounts,dc=home,dc=lab'
-    password = **********
-    base_dn = "dc=home,dc=lab"     
+    server = "labserver.demo.lab"             
+    identity = 'uid=svc.radius,cn=sysaccounts,cn=etc,dc=demo,dc=lab'
+    password = 'ultra-secret'
+    base_dn = "dc=demo,dc=lab"     
 
-    user {
-        base_dn = "ou=People,${..base_dn}"
-        filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
-    }
     update {
         control:Password-With-Header += 'userPassword'
     }
@@ -15,5 +11,46 @@ ldap {
     tls {
         start_tls = yes
     }
-}
+    user {
+       base_dn = "cn=users,cn=accounts,${..base_dn}"
+       filter = "(uid=%{%{Stripped-User-Name}:-%{User-Name}})"
+    }
 
+    group {
+      base_dn = "cn=groups,cn=accounts,${..base_dn}"
+      filter = '(objectClass=posixGroup)'
+      membership_attribute = 'memberOf'
+   }
+}
+ldap ldap_radsec {
+    server = "labserver.demo.lab"             
+    identity = 'uid=svc.radius,cn=sysaccounts,cn=etc,dc=demo,dc=lab'
+    password = 'ultra-secret'
+    base_dn = "cn=computers,cn=accounts,dc=demo,dc=lab"
+    update {
+        control:Password-With-Header += 'userPassword'
+    }
+    tls {
+        start_tls = yes
+    }
+    user {
+      base_dn = "${..base_dn}"
+      filter = "(&(objectClass=ieee802device)(serverHostname=%{User-Name})(macAddress=%{Tmp-String-0}))"
+    }
+}
+ldap ldap_macsec {
+    server = "labserver.demo.lab"             
+    identity = 'uid=svc.radius,cn=sysaccounts,cn=etc,dc=demo,dc=lab'
+    password = 'ultra-secret'
+    base_dn = "cn=computers,cn=accounts,dc=demo,dc=lab"
+    update {
+        control:Password-With-Header += 'userPassword'
+    }
+    tls {
+        start_tls = yes
+    }
+    user {
+      base_dn = "${..base_dn}"
+      filter = "(&(objectClass=ieee802device)(macAddress=%{Tmp-String-0}))"
+    }
+}

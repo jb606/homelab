@@ -1,0 +1,6 @@
+dn: uid=svc.radius,cn=sysaccounts,cn=etc,dc=demo,dc=lab
+changetype: add
+objectclass: account
+objectclass: simplesecurityobject
+uid: svc.radius
+userPassword: ultra-secret
